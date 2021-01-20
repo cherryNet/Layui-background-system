@@ -1,0 +1,157 @@
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>layout 后台大布局 - Layui</title>
+    <link rel="stylesheet" href="/public/layui/css/layui.css">
+</head>
+
+<body class="layui-layout-body">
+    <div class="layui-layout layui-layout-admin">
+        <!-- 顶部导航栏 -->
+        {{include '../common/headNavbar.html'}}
+        <!-- 侧边栏 -->
+        {{include '../common/Sidebar.html'}}
+
+        <div class="layui-body">
+            <!-- 内容主体区域 -->
+            <div style="padding: 15px;">
+                <h2>栏目管理</h2>
+                <table class="layui-table" lay-size="sm">
+                    <button type="button" class="layui-btn" id="add">
+                        <i class="layui-icon">&#xe608;</i> 添加
+                      </button>
+                    <colgroup>
+                        <col width="100">
+                        <col width="100">
+                        <!-- 不写宽度即平分剩余空间 -->
+                        <col width="">
+                        <col width="">
+                        <col width="150">
+                        <col>
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>分类名称</th>
+                            <th>序号</th>
+                            <th>添加时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody">
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 底部固定栏 -->
+        {{include '../common/bottom.html'}}
+    </div>
+</body>
+
+<script src="/public/layui/layui.js"></script>
+<script src="/public/js/jQuery.js"></script>
+<script src="/public/js/moment.js"></script>
+<script src="/public/js/util.js"></script>
+
+<script>
+    // 需要的layui
+    layui.use(['layer', 'element'], function() {
+
+    });
+
+    // 发送ajax请求
+    (function() {
+        $.ajax({
+            url: '/getCate',
+            dataType: 'json'
+        }).then(res => {
+            // 动态创建td,追加到tboby里面去
+            add_tr(res);
+        })
+    })()
+
+    function add_tr(data) {
+        let tdHtml = ``;
+        data.forEach((item, index) => {
+                let {
+                    name,
+                    sort,
+                    add_date,
+                    cat_id
+                } = item;
+                // 调用时间 转换函数
+                add_date = util.date_format(add_date);
+                tdHtml += `
+            <tr>
+              <td>${index + 1}</td>
+              <td>${name}</td>
+              <td>${sort}</td>
+              <td>${add_date}</td>
+              <td>
+                <div class="layui-btn-group">
+                    <button type="button" class="layui-btn layui-btn-sm edit" cat_id='${cat_id}'><i class="layui-icon"></i></button>
+                    <button type="button" class="layui-btn layui-btn-sm layui-btn layui-btn-danger delete" cat_id='${cat_id}'><i class="layui-icon"></i></button>
+                </div>
+              </td>
+            </tr>
+            `;
+            })
+            // 把数据添加到tbody里去
+        $('#tbody').html(tdHtml);
+    }
+
+    // 因为元素是动态添加的 所以需要事件委托
+    $('#tbody').on('click', '.delete', function() {
+        let _this = $(this);
+        // 获取创建时从数据库获取的id 绑定到自定义属性的值
+        let cat_id = $(this).attr('cat_id');
+        // 询问框
+        layer.confirm('是否确认删除?', {
+            btn: ['确认', '取消'] //按钮
+        }, function() {
+            // 发送ajax请求 删除表的数据
+            $.ajax({
+                type: 'post',
+                url: '/delCat',
+                data: {
+                    cat_id
+                },
+                dataType: 'json'
+            }).then(res => {
+                let {
+                    errcode,
+                    message
+                } = res;
+                if (errcode == 0) {
+                    layer.msg(message);
+                    // 找到祖先元素tr 再删除当前tr行
+                    _this.parents('tr').remove();
+                    // 找到每个tr中的第一个td,重新编号
+                    $.each($("#tbody tr").find('td:eq(0)'), function(index, ele) {
+                        $(ele).html(index + 1)
+                    })
+                }
+            })
+        });
+    })
+
+    // 跳转添加数据页面
+    $('#add').on('click', function() {
+        location.href = '/addElement'
+    })
+
+    // 跳转编辑页面
+    $('#tbody').on('click', '.edit', function() {
+        // 获取自定义 的 cat_id 数据
+        let cat_id = $(this).attr('cat_id');
+        // 再把值放问好后面传过去
+        location.href = `/editData?cat_id=${cat_id}`;
+    })
+</script>
+
+</html>
