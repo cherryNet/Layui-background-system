@@ -22,68 +22,135 @@
             <!-- 内容主体区域 -->
 
             <div style="padding: 15px;">
-                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-                    <legend>默认表格</legend>
-                </fieldset>
+                <table class="layui-hide" id="test" lay-filter="test"></table>
 
-                <div class="layui-form">
-                    <table class="layui-table">
-                        <colgroup>
-                            <col width="150">
-                            <col width="150">
-                            <col width="200">
-                            <col>
-                        </colgroup>
-                        <thead>
-                            <tr>
-                                <th>人物</th>
-                                <th>民族</th>
-                                <th>出场时间</th>
-                                <th>格言</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>贤心</td>
-                                <td>汉族</td>
-                                <td>1989-10-14</td>
-                                <td>人生似修行</td>
-                            </tr>
-                            <tr>
-                                <td>张爱玲</td>
-                                <td>汉族</td>
-                                <td>1920-09-30</td>
-                                <td>于千万人之中遇见你所遇见的人，于千万年之中，时间的无涯的荒野里…</td>
-                            </tr>
-                            <tr>
-                                <td>Helen Keller</td>
-                                <td>拉丁美裔</td>
-                                <td>1880-06-27</td>
-                                <td> Life is either a daring adventure or nothing.</td>
-                            </tr>
-                            <tr>
-                                <td>岳飞</td>
-                                <td>汉族</td>
-                                <td>1103-北宋崇宁二年</td>
-                                <td>教科书再滥改，也抹不去“民族英雄”的事实</td>
-                            </tr>
-                            <tr>
-                                <td>孟子</td>
-                                <td>华夏族（汉族）</td>
-                                <td>公元前-372年</td>
-                                <td>猿强，则国强。国强，则猿更强！ </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <script type="text/html" id="barDemo">
+                    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+                </script>
             </div>
+
+            <!-- 底部固定栏 -->
+            {{include '../common/bottom.html'}}
+
         </div>
-
-        <!-- 底部固定栏 -->
-        {{include '../common/bottom.html'}}
-
-    </div>
-    <script src="/public/layui/layui.js"></script>
 </body>
+<script src="/public/layui/layui.js"></script>
+
+<script>
+    layui.use('table', function() {
+        var table = layui.table;
+
+        table.render({
+            elem: '#test',
+            url: '/articleAll',
+            toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
+                ,
+            defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            title: '用户数据表',
+            cols: [
+                [{
+                    type: 'checkbox',
+                    fixed: 'left'
+                }, {
+                    field: 'art_id',
+                    title: 'ID',
+                    width: 80,
+                    fixed: 'left',
+                    unresize: true,
+                    sort: true
+                }, {
+                    field: 'title',
+                    title: '标题',
+                    width: 120,
+                    edit: 'text'
+                }, {
+                    field: 'content',
+                    title: '内容',
+                    width: 150,
+                    edit: 'text',
+
+                }, {
+                    field: 'cat_id',
+                    title: '分类',
+                    width: 80,
+                    edit: 'text',
+                    sort: true
+                }, {
+                    field: 'author',
+                    title: '作者',
+                    edit: 'text',
+                    width: 100
+                }, {
+                    field: 'cover',
+                    title: '封面图片',
+                }, {
+                    field: 'status',
+                    title: '状态',
+                    width: 100,
+                }, {
+                    field: 'publish_date',
+                    title: '发布日期',
+                    width: 120,
+                }, {
+                    fixed: 'right',
+                    title: '操作',
+                    toolbar: '#barDemo',
+                    width: 115
+                }]
+            ],
+            page: true
+        });
+
+        //头工具栏事件
+        table.on('toolbar(test)', function(obj) {
+            var checkStatus = table.checkStatus(obj.config.id);
+            switch (obj.event) {
+                case 'getCheckData':
+                    var data = checkStatus.data;
+                    layer.alert(JSON.stringify(data));
+                    break;
+                case 'getCheckLength':
+                    var data = checkStatus.data;
+                    layer.msg('选中了：' + data.length + ' 个');
+                    break;
+                case 'isAll':
+                    layer.msg(checkStatus.isAll ? '全选' : '未全选');
+                    break;
+
+                    //自定义头工具栏右侧图标 - 提示
+                case 'LAYTABLE_TIPS':
+                    layer.alert('这是工具栏右侧自定义的一个图标按钮');
+                    break;
+            };
+        });
+
+        //监听行工具事件
+        table.on('tool(test)', function(obj) {
+            var data = obj.data;
+            //console.log(obj)
+            if (obj.event === 'del') {
+                layer.confirm('真的删除行么', function(index) {
+                    obj.del();
+                    layer.close(index);
+                });
+            } else if (obj.event === 'edit') {
+                layer.prompt({
+                    formType: 2,
+                    value: data.email
+                }, function(value, index) {
+                    obj.update({
+                        email: value
+                    });
+                    layer.close(index);
+                });
+            }
+        });
+    });
+</script>
 
 </html>

@@ -3,8 +3,10 @@ const express = require('express');
 // 得到一个路由器
 let router = express.Router()
 
-// 倒入控制器
+// 栏目管理控制器控制器
 let controller = require('../controller/controller.js');
+// 引入文章控制器
+let articleControl = require('../controller/articleControl');
 
 // 获取post 参数的中间件
 router.use(express.json()) // for parsing application/json
@@ -49,6 +51,10 @@ router.post('/getOneCate', controller.getOneCate)
 
 // 修改更新数据内容
 router.post('/updateData', controller.updateData)
+
+
+// 获取文章管理数据
+router.get('/articleAll', articleControl.articleAll)
 
 
 // 暴露路由器
