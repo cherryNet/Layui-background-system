@@ -56,6 +56,19 @@ router.post('/updateData', controller.updateData)
 // 获取文章管理数据
 router.get('/articleAll', articleControl.articleAll)
 
+// 删除文章管理数据 行
+router.post('/deleartRow', articleControl.deleartRow)
+
+// 添加文章页面
+router.get('/addArticlePage', (req, res) => {
+    res.render('content/addArticlePage.html');
+})
+
+// 获取文章分类数据
+router.post('/classify', articleControl.classify);
+
+// 添加新文章
+router.post('/addarticle', articleControl.addarticle)
 
 // 暴露路由器
 module.exports = router;

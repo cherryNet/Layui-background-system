@@ -17,32 +17,46 @@
         <div class="layui-body">
             <div style="padding: 15px;">
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
-                    <legend>添加数据</legend>
+                    <legend>添加文章</legend>
                 </fieldset>
                 <form class="layui-form" action="">
                     <div class="layui-form-item">
-                        <label class="layui-form-label">分类名称:</label>
+                        <label class="layui-form-label">标题:</label>
                         <div class="layui-input-inline">
-                            <input type="text" required lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input" name="name">
+                            <input type="text" required lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input" name="title">
                         </div>
                     </div>
                     <div class="layui-form-item">
-                        <label class="layui-form-label">序号:</label>
+                        <label class="layui-form-label">文章封面:</label>
+                        <button type="button" class="layui-btn" id="test1">
+                            <i class="layui-icon">&#xe67c;</i>上传图片
+                        </button>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">所属分类：</label>
                         <div class="layui-input-inline">
-                            <input type="number" name="sort" required lay-verify="number" autocomplete="off" class="layui-input">
+                            <select name="cat_id" id="cat_id" lay-verify="required">
+                                
+                              </select>
                         </div>
                     </div>
                     <div class="layui-form-item">
-                        <label class="layui-form-label">添加时间：</label>
+                        <label class="layui-form-label">状态：</label>
                         <div class="layui-input-inline">
-                            <input type="text" id="add_date" name="add_date" required lay-verify="required" autocomplete="off" class="layui-input">
+                            <input type="radio" name="status" value="0" title="未发布" checked>
+                            <input type="radio" name="status" value="1" title="发布">
                         </div>
                     </div>
-
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">内容：</label>
+                        <div class="layui-input-inline">
+                            <textarea name="content" required lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
+                        </div>
+                    </div>
 
                     <div class="layui-form-item">
                         <div class="layui-input-block">
-                            <button class="layui-btn" lay-submit lay-filter="formDemo">确认</button>
+                            <button class="layui-btn" lay-submit lay-filter="formDemo">添加</button>
                             <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                         </div>
                     </div>
@@ -57,39 +71,27 @@
 <!-- js -->
 {{include '../public-js-css/scriptjs.html'}}
 <script>
-    // 获取当前url地址
-    let url = location.href;
-    // 定义正则用来获取 cat_id 的参数
-    let reg = /cat_id=(.*)&?/;
-    let cat_id = reg.exec(url)[1];
-    // 发送ajax请求 获取当前id的用户信息
-    $.ajax({
-        type: 'post',
-        url: '/getOneCate',
-        data: {
-            cat_id
-        } //把cat_id传过去
-    }).then(res => {
-        let {
-            errcode,
-            name,
-            sort,
-            add_date,
-            cat_id
-        } = res;
-        add_date = util.date_format(add_date) //调用时间转换模块
-            // 再给当前表单元素赋值  实先回显
-        $("input[name='name']").val(name)
-        $("input[name='sort']").val(sort)
-        $("input[name='add_date']").val(add_date)
-    })
+    // 发送ajax请求 获取分类数据
+    (function() {
+        $.ajax({
+            type: 'post',
+            url: '/classify',
+            dataType: 'json'
+        }).then(res => {
+            let optionStr = `<option value=""></option>`;
+            res.forEach(val => {
+                optionStr += `<option value="${val.cat_id}">${val.name}</option>`
+            })
+            $("#cat_id").html(optionStr); //赋值给下拉框
+        })
+    })()
 
 
-    // --------------------------------------------------------------
     // 
-    layui.use(['form', 'laydate'], function() {
+    layui.use(['form', 'laydate', 'upload'], function() {
         var form = layui.form;
         var laydate = layui.laydate;
+        var upload = layui.upload;
 
         //监听提交
         form.on('submit(formDemo)', function(data) {
@@ -98,14 +100,10 @@
             var index = layer.load(1, {
                 shade: [0.4, '#fff'] //0.4透明度的白色背景
             });
-
-            // 把cat_id 追加到 data.field 对象中去
-            data.field.cat_id = cat_id;
-
             // 发送ajax请求
             $.ajax({
                 type: 'post',
-                url: '/updateData',
+                url: '/addarticle',
                 data: data.field //把表单数据传过去
             }).then(res => {
                 let {
@@ -113,7 +111,7 @@
                     message
                 } = res;
                 if (errcode == 0) {
-                    location.href = "/table";
+                    location.href = "/articleSort";
                     layer.msg(message)
                 } else {
                     layer.msg(message)
@@ -128,6 +126,7 @@
             elem: '#add_date',
             type: "datetime"
         });
+
     });
 </script>
 

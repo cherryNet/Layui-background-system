@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>layout 后台大布局 - Layui</title>
-    <link rel="stylesheet" href="/public/layui/css/layui.css">
+    <!-- css -->
+    {{include '../public-js-css/linkcss.html'}}
 </head>
 
 <body class="layui-layout-body">
@@ -54,8 +54,8 @@
         {{include '../common/bottom.html'}}
     </div>
 </body>
-<script src="/public/layui/layui.js"></script>
-<script src="/public/js/jQuery.js"></script>
+<!-- js -->
+{{include '../public-js-css/scriptjs.html'}}
 <script>
     layui.use(['form', 'laydate'], function() {
         var form = layui.form;

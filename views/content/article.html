@@ -4,8 +4,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>layout 后台大布局 - Layui</title>
-    <link rel="stylesheet" href="/public/layui/css/layui.css">
+    <!-- css -->
+    {{include '../public-js-css/linkcss.html'}}
 </head>
 
 <body class="layui-layout-body">
@@ -22,6 +22,12 @@
             <!-- 内容主体区域 -->
 
             <div style="padding: 15px;">
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
+                    <legend>文章管理</legend>
+                </fieldset>
+                <button type="button" class="layui-btn" id="add">
+                    <i class="layui-icon">&#xe608;</i> 添加
+                </button>
                 <table class="layui-hide" id="test" lay-filter="test"></table>
 
                 <script type="text/html" id="barDemo">
@@ -35,17 +41,20 @@
 
         </div>
 </body>
-<script src="/public/layui/layui.js"></script>
+<!-- js -->
+{{include '../public-js-css/scriptjs.html'}}
 
 <script>
-    layui.use('table', function() {
+    layui.use(['table', 'element'], function() {
+        var element = layui.element;
         var table = layui.table;
 
-        table.render({
+        let tableare = table.render({
             elem: '#test',
             url: '/articleAll',
-            toolbar: '#toolbarDemo' //开启头部工具栏，并为其绑定左侧模板
-                ,
+            toolbar: '#toolbarDemo', //开启头部工具栏，并为其绑定左侧模板
+            limit: 5,
+            limits: [5, 10, 15, 20],
             defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
                 title: '提示',
                 layEvent: 'LAYTABLE_TIPS',
@@ -62,7 +71,8 @@
                     width: 80,
                     fixed: 'left',
                     unresize: true,
-                    sort: true
+                    sort: true,
+                    hide: true
                 }, {
                     field: 'title',
                     title: '标题',
@@ -132,11 +142,29 @@
         //监听行工具事件
         table.on('tool(test)', function(obj) {
             var data = obj.data;
-            //console.log(obj)
+            // console.log(obj)
             if (obj.event === 'del') {
-                layer.confirm('真的删除行么', function(index) {
-                    obj.del();
-                    layer.close(index);
+                layer.confirm('是否确认删除', function(index) {
+                    let art_id = obj.data.art_id
+                    $.post('/deleartRow', {
+                        art_id
+                    }, (res) => {
+                        let {
+                            errcode,
+                            message
+                        } = res;
+                        if (errcode == 0) {
+                            layer.msg(message);
+                            tableare.reload(); // 局部刷新  表格刷新
+                            obj.del(); //删除当前行
+                            layer.close(index); //确认后关闭弹窗
+                        } else {
+                            layer.msg(message);
+                            obj.del(); //删除当前行
+                            layer.close(index); //确认后关闭弹窗
+                        }
+
+                    }, 'json');
                 });
             } else if (obj.event === 'edit') {
                 layer.prompt({
@@ -151,6 +179,12 @@
             }
         });
     });
+
+
+    // 跳转添加数据页面
+    $('#add').on('click', function() {
+        location.href = '/addArticlePage'
+    })
 </script>
 
 </html>
