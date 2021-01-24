@@ -133,7 +133,7 @@ articleControl.modifyArticle = async(req, res) => {
     // 接收参数
     let { cover, title, cat_id, status, content, art_id } = req.body
 
-    //2.编写sql
+    //sql语句
     let sql = `update article set title='${title}',content='${content}',cover='${cover}',status=${status},cat_id=${cat_id},publish_date=now() where art_id = ${art_id}`;
     let result = await database(sql)
         // 受影响行数不为空

@@ -88,7 +88,7 @@ router.get('/artedit', (req, res) => {
 // 文章编辑数据回显
 router.post('/getOneArt', articleControl.getOneArt);
 
-// 文章内容修改数据库
+// 修改数据库文章内容
 router.post('/modifyArticle', articleControl.modifyArticle);
 
 
