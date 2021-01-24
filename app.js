@@ -20,7 +20,8 @@ app.set('view engine', 'html');
 
 // 托管静态资源
 app.use('/public', express.static(path.join(__dirname, './public')));
-
+// 托管静态资源
+app.use('/uploads', express.static('./uploads'))
 
 // 使用路由中间件
 app.use(router)

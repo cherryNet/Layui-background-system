@@ -60,31 +60,29 @@
     // 需要的layui
     layui.use(['layer', 'element'], function() {
 
-    });
+        // 发送ajax请求
+        (function() {
+            $.ajax({
+                url: '/getCate',
+                dataType: 'json'
+            }).then(res => {
+                // 动态创建td,追加到tboby里面去
+                add_tr(res);
+            })
+        })()
 
-    // 发送ajax请求
-    (function() {
-        $.ajax({
-            url: '/getCate',
-            dataType: 'json'
-        }).then(res => {
-            // 动态创建td,追加到tboby里面去
-            add_tr(res);
-        })
-    })()
-
-    function add_tr(data) {
-        let tdHtml = ``;
-        data.forEach((item, index) => {
-                let {
-                    name,
-                    sort,
-                    add_date,
-                    cat_id
-                } = item;
-                // 调用时间 转换函数
-                add_date = util.date_format(add_date);
-                tdHtml += `
+        function add_tr(data) {
+            let tdHtml = ``;
+            data.forEach((item, index) => {
+                    let {
+                        name,
+                        sort,
+                        add_date,
+                        cat_id
+                    } = item;
+                    // 调用时间 转换函数
+                    add_date = util.date_format(add_date);
+                    tdHtml += `
             <tr>
               <td>${index + 1}</td>
               <td>${name}</td>
@@ -98,58 +96,59 @@
               </td>
             </tr>
             `;
-            })
-            // 把数据添加到tbody里去
-        $('#tbody').html(tdHtml);
-    }
+                })
+                // 把数据添加到tbody里去
+            $('#tbody').html(tdHtml);
+        }
 
-    // 因为元素是动态添加的 所以需要事件委托
-    $('#tbody').on('click', '.delete', function() {
-        let _this = $(this);
-        // 获取创建时从数据库获取的id 绑定到自定义属性的值
-        let cat_id = $(this).attr('cat_id');
-        // 询问框
-        layer.confirm('是否确认删除?', {
-            btn: ['确认', '取消'] //按钮
-        }, function() {
-            // 发送ajax请求 删除表的数据
-            $.ajax({
-                type: 'post',
-                url: '/delCat',
-                data: {
-                    cat_id
-                },
-                dataType: 'json'
-            }).then(res => {
-                let {
-                    errcode,
-                    message
-                } = res;
-                if (errcode == 0) {
-                    layer.msg(message);
-                    // 找到祖先元素tr 再删除当前tr行
-                    _this.parents('tr').remove();
-                    // 找到每个tr中的第一个td,重新编号
-                    $.each($("#tbody tr").find('td:eq(0)'), function(index, ele) {
-                        $(ele).html(index + 1)
-                    })
-                }
-            })
-        });
-    })
+        // 因为元素是动态添加的 所以需要事件委托
+        $('#tbody').on('click', '.delete', function() {
+            let _this = $(this);
+            // 获取创建时从数据库获取的id 绑定到自定义属性的值
+            let cat_id = $(this).attr('cat_id');
+            // 询问框
+            layer.confirm('是否确认删除?', {
+                btn: ['确认', '取消'] //按钮
+            }, function() {
+                // 发送ajax请求 删除表的数据
+                $.ajax({
+                    type: 'post',
+                    url: '/delCat',
+                    data: {
+                        cat_id
+                    },
+                    dataType: 'json'
+                }).then(res => {
+                    let {
+                        errcode,
+                        message
+                    } = res;
+                    if (errcode == 0) {
+                        layer.msg(message);
+                        // 找到祖先元素tr 再删除当前tr行
+                        _this.parents('tr').remove();
+                        // 找到每个tr中的第一个td,重新编号
+                        $.each($("#tbody tr").find('td:eq(0)'), function(index, ele) {
+                            $(ele).html(index + 1)
+                        })
+                    }
+                })
+            });
+        })
 
-    // 跳转添加数据页面
-    $('#add').on('click', function() {
-        location.href = '/addElement'
-    })
+        // 跳转添加数据页面
+        $('#add').on('click', function() {
+            location.href = '/addElement'
+        })
 
-    // 跳转编辑页面
-    $('#tbody').on('click', '.edit', function() {
-        // 获取自定义 的 cat_id 数据
-        let cat_id = $(this).attr('cat_id');
-        // 再把值放问好后面传过去
-        location.href = `/editData?cat_id=${cat_id}`;
-    })
+        // 跳转编辑页面
+        $('#tbody').on('click', '.edit', function() {
+            // 获取自定义 的 cat_id 数据
+            let cat_id = $(this).attr('cat_id');
+            // 再把值放问好后面传过去
+            location.href = `/editData?cat_id=${cat_id}`;
+        })
+    });
 </script>
 
 </html>

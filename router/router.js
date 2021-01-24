@@ -1,4 +1,8 @@
 const express = require('express');
+const multer = require('multer')
+
+// 定义上传的目录(保存会自动生产该文件夹)
+let upload = multer({ dest: 'uploads/' });
 
 // 得到一个路由器
 let router = express.Router()
@@ -69,6 +73,24 @@ router.post('/classify', articleControl.classify);
 
 // 添加新文章
 router.post('/addarticle', articleControl.addarticle)
+
+// 封面图片上传
+router.post('/upload', upload.single('file'), articleControl.upload)
+
+// 修改 审核状态 是否通过
+router.post('/toExamine', articleControl.toExamine);
+
+// 文章编辑页面
+router.get('/artedit', (req, res) => {
+    res.render('content/articleEditor.html');
+})
+
+// 文章编辑数据回显
+router.post('/getOneArt', articleControl.getOneArt);
+
+// 文章内容修改数据库
+router.post('/modifyArticle', articleControl.modifyArticle);
+
 
 // 暴露路由器
 module.exports = router;
