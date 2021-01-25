@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="utf-8">
+    <title>后台注册登陆</title>
+    <link rel="stylesheet" href="/public/css/Login_register.css">
+</head>
+
+<body>
+    <div class="dowebok">
+        <div class="form sign-in">
+            <h2>欢迎回来</h2>
+            <label>
+                <span>用户名</span>
+                <input type="text" autocomplete="off" id="loginUsername"/>
+            </label>
+            <label>
+                <span>密码</span>
+                <input type="password" id="loginPassword"/>
+            </label>
+            <p class="forgot-pass"><a href="javascript:">忘记密码？</a></p>
+            <button type="button" class="submit" id="LoginBtn">登 录</button>
+            <button type="button" class="fb-btn">使用 <span>facebook</span> 帐号登录</button>
+        </div>
+        <div class="sub-cont">
+            <div class="img">
+                <div class="img__text m--up">
+                    <h2>还未注册？</h2>
+                    <p>立即注册，发现大量机会！</p>
+                </div>
+                <div class="img__text m--in">
+                    <h2>已有帐号？</h2>
+                    <p>有帐号就登录吧，好久不见了！</p>
+                </div>
+                <div class="img__btn">
+                    <span class="m--up">注 册</span>
+                    <span class="m--in">登 录</span>
+                </div>
+            </div>
+            <div class="form sign-up">
+                <h2>立即注册</h2>
+                <label>
+                    <span>用户名</span>
+                    <input type="text" autocomplete="off"/>
+                </label>
+                <label>
+                    <span>密码</span>
+                    <input type="password" />
+                </label>
+                <label>
+                    <span>确认密码</span>
+                    <input type="password" />
+                </label>
+                <button type="button" class="submit">注 册</button>
+                <button type="button" class="fb-btn">使用 <span>facebook</span> 帐号注册</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script src="/public/js/jQuery.js"></script>
+<script src="/public/layui/layui.all.js"></script>
+<script>
+    // 样式
+    document.querySelector('.img__btn').addEventListener('click', function() {
+        document.querySelector('.dowebok').classList.toggle('s--signup')
+    })
+
+    // ajax登陆
+    $('#LoginBtn').on('click', function() {
+        //1.获取用户名和密码  校验
+        let username = $.trim($("#loginUsername").val());
+        let password = $.trim($("#loginPassword").val());
+        if (username == '' || password == '') {
+            layer.msg('用户名和密码不能为空')
+            return;
+        }
+        //loading层 遮盖
+        var index = layer.load(1, {
+            shade: [0.4, '#fff'] //0.4透明度的白色背景
+        });
+        // 发送ajax登陆请求
+        $.post('/loginReq', {
+            username,
+            password
+        }, (res) => {
+            let {
+                errcode,
+                message
+            } = res;
+            if (errcode === 0) {
+                layer.msg(message);
+                location.href = '/'; //跳转到首页页面
+            } else {
+                layer.msg(message);
+                layer.close(index); //关闭loading遮盖
+            }
+        })
+    })
+</script>
+
+</html>

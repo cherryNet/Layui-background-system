@@ -11,6 +11,8 @@ let router = express.Router()
 let controller = require('../controller/controller.js');
 // 引入文章控制器
 let articleControl = require('../controller/articleControl');
+// 用户登陆注册控制器
+let userController = require('../controller/userController');
 
 // 获取post 参数的中间件
 router.use(express.json()) // for parsing application/json
@@ -18,6 +20,7 @@ router.use(express.urlencoded({ extended: true })) // for parsing application/x-
 
 // 展示页面
 router.get(/^\/$|^\/index$/, (req, res) => {
+    console.log(req.session.userInfo)
     res.render('index.html');
 })
 
@@ -90,6 +93,38 @@ router.post('/getOneArt', articleControl.getOneArt);
 
 // 修改数据库文章内容
 router.post('/modifyArticle', articleControl.modifyArticle);
+
+
+// 显示登陆注册页面的接口
+router.get('/Login_register', (req, res) => {
+    // 当已经登陆有session信息  再访问该路径 则直接跳转到首页 
+    if (req.session.userInfo) {
+        res.redirect('/');
+        return
+    }
+    res.render('common/login-register.html');
+})
+
+
+// 请求登陆的接口
+router.post('/loginReq', userController.loginReq);
+
+// 退出登陆
+router.get('/LogOut', (req, res) => {
+    // 删除所有的会话信息
+    req.session.destroy(err => {
+            if (err) { throw err }
+        })
+        // 跳转到登陆页面
+    res.render('common/login-register.html');
+})
+
+
+// 获取session用户信息
+router.get('/userSession', (req, res) => {
+    // let userSession = req.session.userInfo;
+    res.json(req.session.userInfo);
+})
 
 
 // 暴露路由器

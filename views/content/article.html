@@ -77,14 +77,14 @@
                 }, {
                     field: 'title',
                     title: '标题',
-                    width: 100,
+                    width: 150,
                     edit: 'text'
                 }, {
                     field: 'content',
                     title: '内容',
                     width: 130,
                     edit: 'text',
-
+                    hide: true
                 }, {
                     field: 'cat_id',
                     title: '分类',
@@ -126,7 +126,7 @@
                 }, {
                     field: 'publish_date',
                     title: '发布日期',
-                    width: 120,
+                    width: 180
                 }, {
                     fixed: 'right',
                     title: '操作',
@@ -233,7 +233,7 @@
         function viewContent(title, content) {
             //页面层
             layer.open({
-                title: title,
+                title: `文章标题：<span style=" font-weight: 700;font-size:20px;">${title}</span>`,
                 type: 1,
                 skin: 'layui-layer-rim', //加上边框
                 area: ['850px', '700px'], //宽高

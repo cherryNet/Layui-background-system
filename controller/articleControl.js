@@ -131,13 +131,20 @@ articleControl.getOneArt = async(req, res) => {
 // 修改数据库 数据
 articleControl.modifyArticle = async(req, res) => {
     // 接收参数
-    let { cover, title, cat_id, status, content, art_id } = req.body
-
-    //sql语句
-    let sql = `update article set title='${title}',content='${content}',cover='${cover}',status=${status},cat_id=${cat_id},publish_date=now() where art_id = ${art_id}`;
+    let { cover, title, cat_id, status, content, art_id, oldPictures } = req.body;
+    let sql;
+    if (cover) {
+        //有新上传的图片
+        sql = `update article set title='${title}',content='${content}',cover='${cover}',status=${status},cat_id=${cat_id},publish_date=now() where art_id = ${art_id}`;
+    } else {
+        //未修改旧图片
+        sql = `update article set title='${title}',content='${content}',status=${status},cat_id=${cat_id},publish_date=now() where art_id = ${art_id}`;
+    }
     let result = await database(sql)
         // 受影响行数不为空
     if (result.affectedRows) {
+        // 如果有上传新图片 就删除旧图片
+        cover && fs.unlinkSync(oldPictures);
         res.json({ errcode: 0, 'message': '修改成功' })
     } else {
         res.json({ errcode: 1, 'message': '网络异常，请稍后再试' })

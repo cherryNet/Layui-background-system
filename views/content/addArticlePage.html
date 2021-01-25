@@ -97,8 +97,8 @@
         //监听提交
         form.on('submit(formDemo)', function(data) {
             // console.log(data); //获取的是表单数据 和点击提交的按钮
-            //loading层 遮盖
             data.field.content = editor.txt.html(); //获取编辑器内容
+            //loading层 遮盖
             var index = layer.load(1, {
                 shade: [0.4, '#fff'] //0.4透明度的白色背景
             });

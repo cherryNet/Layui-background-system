@@ -17,13 +17,35 @@
     <ul class="layui-nav layui-layout-right">
         <li class="layui-nav-item">
             <a href="javascript:;" style="color:red">
-                <img src="/public/image/master.png" class="layui-nav-img"> 你可爱の爹
+                <img src="/public/image/master.png" class="layui-nav-img">
+                <span id="userName"></span>
             </a>
             <dl class="layui-nav-child">
                 <dd><a href="">基本资料</a></dd>
                 <dd><a href="">安全设置</a></dd>
             </dl>
         </li>
-        <li class="layui-nav-item"><a href="">退出</a></li>
+        <li class="layui-nav-item"><a href="javascript:;" id="logOff">退出</a></li>
     </ul>
 </div>
+<script src="/public/js/jQuery.js"></script>
+<script src="/public/layui/layui.all.js"></script>
+<script>
+    // 发送ajax请求,获取当前session用户信息
+    (function() {
+        $.get('/userSession', function(res) {
+            $('#userName').html(res.username);
+            // console.log(res);
+        }, 'json')
+    })()
+
+    // 退出登陆
+    $('#logOff').on('click', function() {
+        layer.confirm('退出当前账号', {
+            title: '',
+            btn: ['退出', '取消'] //按钮
+        }, function() {
+            location.href = '/LogOut'; //退出登陆
+        });
+    })
+</script>

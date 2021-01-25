@@ -109,6 +109,7 @@
             //loading层 遮盖
             data.field.content = editor.txt.html(); //获取编辑器内容
             data.field.art_id = art_id; //把当前数据库id 传过去
+            data.field.oldPictures = oldPictures; //旧图片的路径
             var index = layer.load(1, {
                 shade: [0.4, '#fff'] //0.4透明度的白色背景
             });
@@ -179,6 +180,7 @@
             })
         })()
 
+        let oldPictures; //旧图片的路径
         // 等分类获取完后 再调用该 回显函数
         function Echo() {
             $.post('/getOneArt', {
@@ -203,8 +205,8 @@
                 });
                 // 图片赋值
                 cover && $('#cover-preview').attr('src', cover)
-                $("input[name='cover']").val(cover) //把src图片路径赋值给隐藏域
-                    // 富文本编译器 添加内容
+                oldPictures = cover; //把旧图片的内容 传过去以供删除
+                // 富文本编译器 添加内容
                 editor.txt.html(content)
             }, 'json');
         }
