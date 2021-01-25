@@ -103,43 +103,36 @@
         var laydate = layui.laydate;
         var upload = layui.upload;
 
-        form.on('submit(formDemo)', function(data) {
-            console.log(11);
-            return false;
-        })
-
         //监听提交
-        // form.on('submit(formDemo)', function(data) {
-        //     console.log('11');
-        //     return false;
-        //     // console.log(data); //获取的是表单数据 和点击提交的按钮
-        //     //loading层 遮盖
-        //     data.field.content = editor.txt.html(); //获取编辑器内容
-        //     data.field.art_id = art_id; //把当前数据库id 传过去
-        //     data.field.oldPictures = oldPictures; //旧图片的路径
-        //     var index = layer.load(1, {
-        //         shade: [0.4, '#fff'] //0.4透明度的白色背景
-        //     });
-        //     // 发送ajax请求
-        //     $.ajax({
-        //         type: 'post',
-        //         url: '/modifyArticle',
-        //         data: data.field //把表单数据传过去
-        //     }).then(res => {
-        //         let {
-        //             errcode,
-        //             message
-        //         } = res;
-        //         if (errcode == 0) {
-        //             location.href = "/articleSort";
-        //             layer.msg(message)
-        //         } else {
-        //             layer.msg(message)
-        //             layer.closeAll(); //疯狂模式，关闭所有层
-        //         }
-        //     })
-        //     return false; //阻止表单提交的默认行为
-        // });
+        form.on('submit(formDemo)', function(data) {
+            // console.log(data); //获取的是表单数据 和点击提交的按钮
+            //loading层 遮盖
+            data.field.content = editor.txt.html(); //获取编辑器内容
+            data.field.art_id = art_id; //把当前数据库id 传过去
+            data.field.oldPictures = oldPictures; //旧图片的路径
+            var index = layer.load(1, {
+                shade: [0.4, '#fff'] //0.4透明度的白色背景
+            });
+            // 发送ajax请求
+            $.ajax({
+                type: 'post',
+                url: '/modifyArticle',
+                data: data.field //把表单数据传过去
+            }).then(res => {
+                let {
+                    errcode,
+                    message
+                } = res;
+                if (errcode == 0) {
+                    location.href = "/articleSort";
+                    layer.msg(message)
+                } else {
+                    layer.msg(message)
+                    layer.closeAll(); //疯狂模式，关闭所有层
+                }
+            })
+            return false; //阻止表单提交的默认行为
+        });
 
         //执行一个laydate实例
         laydate.render({

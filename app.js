@@ -57,8 +57,8 @@ app.use((req, res, next) => {
             next();
         } else {
             // 没有则跳转到登陆页面
-            // res.redirect('/Login_register');
-            next();
+            res.redirect('/Login_register');
+            // next();
         }
     }
 })

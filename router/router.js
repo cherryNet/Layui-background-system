@@ -13,6 +13,9 @@ let controller = require('../controller/controller.js');
 let articleControl = require('../controller/articleControl');
 // 用户登陆注册控制器
 let userController = require('../controller/userController');
+// 数据统计控制器
+let statistics = require('../controller/statistics');
+
 
 // 获取post 参数的中间件
 router.use(express.json()) // for parsing application/json
@@ -20,7 +23,6 @@ router.use(express.urlencoded({ extended: true })) // for parsing application/x-
 
 // 展示页面
 router.get(/^\/$|^\/index$/, (req, res) => {
-    // console.log(req.session.userInfo)
     res.render('index.html');
 })
 
@@ -125,6 +127,9 @@ router.get('/userSession', (req, res) => {
     let userSession = req.session.userInfo;
     res.json(req.session.userInfo);
 })
+
+// 统计出分类的文章总数
+router.get('/cateCount', statistics.cateCount);
 
 
 // 暴露路由器

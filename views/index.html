@@ -17,7 +17,8 @@
 
         <div class="layui-body">
             <!-- 内容主体区域 -->
-            <div style="padding: 15px;">内容主体区域</div>
+            <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+            <div id="cate" style="width: 600px;height:400px;"></div>
         </div>
 
         <!-- 底部固定栏 -->
@@ -26,11 +27,54 @@
     </div>
     <!-- js -->
     {{include './public-js-css/scriptjs.html'}}
-
+    <script src="/public/js/echarts.min.js"></script>
     <script>
+        // 发送ajax请求 获取要统计的数据
+        $.get('/cateCount', function(res) {
+            let names = [];
+            let totals = [];
+            res.map(val => {
+                names.push(val.name);
+                totals.push(val.total);
+            })
+            initEchart(names, totals);
+        }, 'json');
+
+
+        // 渲染可视数据的函数
+        function initEchart(names, totals) {
+            // 基于准备好的dom，初始化echarts实例
+            var myChart = echarts.init(document.getElementById('cate'));
+
+            // 指定图表的配置项和数据
+            var option = {
+                title: {
+                    text: '文章管理系统统计一览表'
+                },
+                tooltip: {},
+                legend: {
+                    data: ['统计']
+                },
+                xAxis: {
+                    data: names
+                },
+                yAxis: {},
+                series: [{
+                    name: '文章数',
+                    type: 'bar',
+                    data: totals
+                }]
+            };
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+        }
+
+
         //JavaScript代码区域
         layui.use('element', function() {
             var element = layui.element;
+
         });
     </script>
 </body>

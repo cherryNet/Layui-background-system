@@ -216,11 +216,9 @@
                     if (errcode == 0) {
                         layer.msg(message);
                         tableare.reload(); // 局部刷新  表格刷新
-                        obj.del(); //删除当前行
                         layer.close(index); //确认后关闭弹窗
                     } else {
                         layer.msg(message);
-                        obj.del(); //删除当前行
                         layer.close(index); //确认后关闭弹窗
                     }
 

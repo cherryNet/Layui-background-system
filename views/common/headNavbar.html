@@ -29,7 +29,6 @@
     </ul>
 </div>
 <script src="/public/js/jQuery.js"></script>
-<script src="/public/layui/layui.all.js"></script>
 <script>
     // 发送ajax请求,获取当前session用户信息
     (function() {
@@ -41,11 +40,8 @@
 
     // 退出登陆
     $('#logOff').on('click', function() {
-        layer.confirm('退出当前账号', {
-            title: '',
-            btn: ['退出', '取消'] //按钮
-        }, function() {
+        if (confirm('退出当前账号')) {
             location.href = '/LogOut'; //退出登陆
-        });
+        }
     })
 </script>
