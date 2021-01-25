@@ -46,7 +46,6 @@ app.use((req, res, next) => {
     let path = req.path.toLowerCase(); //toLowerCase() 转换成小写
     // 定义不需要权限验证的路由
     let routeArr = ['/loginreq', '/login_register'];
-    console.log(path);
     // 判断当前数组里有没有访问的路由
     if (routeArr.includes(path)) {
         //有 则 放行
@@ -58,7 +57,8 @@ app.use((req, res, next) => {
             next();
         } else {
             // 没有则跳转到登陆页面
-            res.redirect('/Login_register');
+            // res.redirect('/Login_register');
+            next();
         }
     }
 })

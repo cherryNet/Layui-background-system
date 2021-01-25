@@ -85,9 +85,12 @@ articleControl.upload = (req, res) => {
 
 // 添加新文章
 articleControl.addarticle = async(req, res) => {
+    console.log('请求');
     //接收参数
     let { title, cat_id, status, content, cover } = req.body;
-    let sql = `insert into article(title, cat_id, status,content,cover,publish_date) values('${title}',${cat_id},${status},'${content}','${cover}',now())`;
+    // 接收当前登陆账号的用户名
+    // let username = req.session.userInfo.username;
+    let sql = `insert into article(title, cat_id, status,author,content,cover,publish_date) values('${title}',${cat_id},${status},'bbbb','${content}','${cover}',now())`;
     let result = await database(sql);
     // 受影响行不为0
     if (result.affectedRows) {

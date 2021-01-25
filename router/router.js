@@ -20,7 +20,7 @@ router.use(express.urlencoded({ extended: true })) // for parsing application/x-
 
 // 展示页面
 router.get(/^\/$|^\/index$/, (req, res) => {
-    console.log(req.session.userInfo)
+    // console.log(req.session.userInfo)
     res.render('index.html');
 })
 
@@ -122,7 +122,7 @@ router.get('/LogOut', (req, res) => {
 
 // 获取session用户信息
 router.get('/userSession', (req, res) => {
-    // let userSession = req.session.userInfo;
+    let userSession = req.session.userInfo;
     res.json(req.session.userInfo);
 })
 
