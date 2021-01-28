@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/public/layui/css/layui.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        .box {
+            width: 398px;
+            height: 578px;
+            border: 1px solid transparent;
+        }
+        
+        .portrait {
+            height: 178px;
+            width: 100%;
+            background-color: #48463e;
+            display: flex;
+            align-items: center;
+        }
+        
+        .headPort {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            margin: 0 10px 0 35px;
+            overflow: hidden;
+            background-color: cadetblue;
+        }
+        
+        .usernamae {
+            font-size: 20px;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box">
+        <div class="portrait">
+            <div class="headPort" id="headPort">
+                <img src="/public/image/headPortrait.png" style="width: 100%;" id="head_conf">
+            </div>
+            <button type="button" class="layui-btn" id="test1" style="display: none;">
+                <i class="layui-icon">&#xe67c;</i>上传图片
+            </button>
+            <span class="usernamae" id="username">用户名</span>
+        </div>
+        <div class="layui-form-item">
+            <span style="color:red">点击头像更换</span>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">预览：</label>
+            <div class="layui-input-block">
+                <img src="" style="width: 80px; height: 80px;" id="preview">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" id="replace">确认</button>
+                <button type="button" class="layui-btn layui-btn-primary">取消</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="/public/js/jQuery.js"></script>
+<script src="/public/layui/layui.js"></script>
+<script>
+    $('#headPort').on('click', function() {
+        $('#test1').click();
+    })
+
+    // 获取当前url地址
+    let url = location.href;
+    // 定义正则用来获取 cat_id 的参数
+    let reg = /user_id=(.*)&?/;
+    let user_id = reg.exec(url)[1];
+    console.log(user_id);
+
+
+    layui.use('upload', function() {
+        var upload = layui.upload;
+
+        var OldPict; // 储存旧图片地址
+        let potr_url; //储存上传图片的路径
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#test1' //绑定元素
+                ,
+            url: '/upload' //上传接口
+                ,
+            done: function({
+                code,
+                message,
+                src
+            }) {
+                if (code == 0) {
+                    //上传完毕回调
+                    $('#preview').attr('src', src)
+                    potr_url = src;
+                } else {
+                    layer.msg(message);
+                }
+            },
+            error: function() {
+                //请求异常回调
+            }
+        });
+
+        // 修改当前头像
+        $('#replace').on('click', function() {
+            if (!potr_url) {
+                return;
+            }
+            // 发送ajax请求
+            $.post('/picture_upload', {
+                OldPict,
+                potr_url,
+                user_id
+            }, (res) => {
+                let {
+                    errcode,
+                    message
+                } = res;
+                if (errcode == 0) {
+                    $('#head_conf').attr('src', potr_url)
+                    $('#preview').attr('src', '')
+                    OldPict = potr_url;
+                    console.log(OldPict);
+                    layer.msg(message);
+                    potr_url = '';
+                    return;
+                }
+                layer.msg(message);
+            }, 'json');
+        })
+
+        // 获取当前use_id的头像和用户名
+        function initial() {
+            if (user_id == 'undefined') {
+                return;
+            }
+            $.post('/obtain_pict', {
+                user_id
+            }, (res) => {
+                let {
+                    username,
+                    avatar
+                } = res
+                if (avatar) {
+                    $('#head_conf').attr('src', avatar);
+                    OldPict = avatar;
+                }
+                $('#username').html(username);
+            }, 'json')
+        }
+        initial()
+    });
+</script>
+
+</html>

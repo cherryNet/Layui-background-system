@@ -26,267 +26,309 @@
                 <fieldset class="layui-elem-field layui-field-title" style="margin-top: 20px;">
                     <legend>文章管理</legend>
                 </fieldset>
-                <button type="button" class="layui-btn" id="add">
-                    <i class="layui-icon">&#xe608;</i> 添加
-                </button>
                 <table class="layui-hide" id="test" lay-filter="test"></table>
-
-                <!-- <script type="text/html" id="barDemo">
-                    按钮
-                </script> -->
             </div>
+            <!-- 开启头部工具栏 -->
+            <script type="text/html" id="leftContent">
+                <div style="display:flex">
 
-            <!-- 底部固定栏 -->
-            {{include '../common/bottom.html'}}
+                    <button type="button" class="layui-btn layui-bg-blue" id="add" style="margin-right:40px">
+                            <i class="layui-icon">&#xe608;</i> 添加
+                    </button>
 
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">标题</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="title" id="title" required placeholder="请输入标题" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">状态</label>
+                        <div class="layui-input-inline">
+                            <select id="status" name="status" lay-verify="required">
+                                <option value="">全部</option>
+                                <option value="0">未发布</option>
+                                <option value="1">已发布</option>
+                                <option value="2">违规</option>
+                              </select>
+                        </div>
+                    </div>
+                    <button class="layui-btn" id="search">搜索</button>
+                </div>
+            </script>
         </div>
-</body>
-<!-- js -->
-{{include '../public-js-css/scriptjs.html'}}
-<script src="/public/js/lightbox-plus-jquery.min.js"></script>
+        <!-- 底部固定栏 -->
+        {{include '../common/bottom.html'}}
 
-<script>
-    layui.use(['table', 'element'], function() {
-        var element = layui.element;
-        var table = layui.table;
 
-        let tableare = table.render({
-            elem: '#test',
-            url: '/articleAll',
-            toolbar: '#toolbarDemo', //开启头部工具栏，并为其绑定左侧模板
-            limit: 5,
-            limits: [5, 10, 15, 20],
-            defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
-                title: '提示',
-                layEvent: 'LAYTABLE_TIPS',
-                icon: 'layui-icon-tips'
-            }],
-            title: '用户数据表',
-            cols: [
-                [{
-                    type: 'checkbox',
-                    fixed: 'left'
-                }, {
-                    field: 'art_id',
-                    title: 'ID',
-                    width: 80,
-                    fixed: 'left',
-                    unresize: true,
-                    sort: true,
-                    hide: true
-                }, {
-                    field: 'title',
-                    title: '标题',
-                    width: 150,
-                    edit: 'text'
-                }, {
-                    field: 'content',
-                    title: '内容',
-                    width: 130,
-                    edit: 'text',
-                    hide: true
-                }, {
-                    field: 'cat_id',
-                    title: '分类',
-                    width: 80,
-                    templet: (res) => {
-                        return res.name;
-                    }
-                }, {
-                    field: 'author',
-                    title: '作者',
-                    edit: 'text',
-                    width: 80,
-                }, {
-                    field: 'cover',
-                    title: '封面图片',
-                    width: 120,
-                    templet({
-                        cover,
-                        title
-                    }) {
-                        let imgStr = `<a class="example-image-link" href="${cover}" data-lightbox="example-1" data-title="${title}">
+        <!-- js -->
+        {{include '../public-js-css/scriptjs.html'}}
+        <script src="/public/js/lightbox-plus-jquery.min.js"></script>
+
+        <script>
+            layui.use(['table', 'element'], function() {
+                var element = layui.element;
+                var table = layui.table;
+
+                let tableare = table.render({
+                    // where: { //可以在数据表格发送ajax请求时 一起发送
+                    //     a: 2,
+                    //     b: 3
+                    // },
+                    id: "testReload",
+                    elem: '#test',
+                    url: '/articleAll',
+                    toolbar: '#leftContent', //开启头部工具栏，并为其绑定左侧模板
+                    limit: 5,
+                    limits: [5, 10, 15, 20],
+                    defaultToolbar: ['filter', 'exports', 'print', { //自定义头部工具栏右侧图标。如无需自定义，去除该参数即可
+                        title: '提示',
+                        layEvent: 'LAYTABLE_TIPS',
+                        icon: 'layui-icon-tips'
+                    }],
+                    title: '用户数据表',
+                    cols: [
+                        [{
+                            type: 'checkbox',
+                            fixed: 'left'
+                        }, {
+                            field: 'art_id',
+                            title: 'ID',
+                            width: 80,
+                            fixed: 'left',
+                            unresize: true,
+                            sort: true,
+                            hide: true
+                        }, {
+                            field: 'title',
+                            title: '标题',
+                            width: 150,
+                            edit: 'text'
+                        }, {
+                            field: 'content',
+                            title: '内容',
+                            width: 130,
+                            edit: 'text',
+                            hide: true
+                        }, {
+                            field: 'cat_id',
+                            title: '分类',
+                            width: 80,
+                            templet: (res) => {
+                                return res.name;
+                            }
+                        }, {
+                            field: 'author',
+                            title: '作者',
+                            edit: 'text',
+                            width: 80,
+                        }, {
+                            field: 'cover',
+                            title: '封面图片',
+                            width: 120,
+                            templet({
+                                cover,
+                                title
+                            }) {
+                                let imgStr = `<a class="example-image-link" href="${cover}" data-lightbox="example-1" data-title="${title}">
                         <img class="example-image" src="${cover}" alt="暂未上传" />
                     </a>`;
-                        return imgStr;
-                    }
-                }, {
-                    field: 'status',
-                    title: '状态',
-                    width: 80,
-                    templet: (item) => {
-                        // 映射关系 或 new Map也行
-                        let statusMap = {
-                            "0": `<span class="layui-badge layui-bg-black">未发布</span>`,
-                            "1": `<span class='layui-badge layui-bg-green'>已发布</span>`,
-                            "2": `<span class='layui-badge'>违 &nbsp; 规</span>`
-                        }
-                        return statusMap[item.status]
-                    }
-                }, {
-                    field: 'publish_date',
-                    title: '发布日期',
-                    width: 180
-                }, {
-                    fixed: 'right',
-                    title: '操作',
-                    // toolbar: '#barDemo',
-                    templet({
-                        status
-                    }) {
-                        let operate_button = `<a class="layui-btn layui-btn-xs" lay-event="show">查看内容</a>`;
-                        switch (status) {
-                            case 0: //未发布
-                                operate_button += `<a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="verify">待审核</a>`;
-                                break;
-                            default:
-                                break;
-                        }
-                        operate_button += `<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+                                return imgStr;
+                            }
+                        }, {
+                            field: 'status',
+                            title: '状态',
+                            width: 80,
+                            templet: (item) => {
+                                // 映射关系 或 new Map也行
+                                let statusMap = {
+                                    "0": `<span class="layui-badge layui-bg-black">未发布</span>`,
+                                    "1": `<span class='layui-badge layui-bg-green'>已发布</span>`,
+                                    "2": `<span class='layui-badge'>违 &nbsp; 规</span>`
+                                }
+                                return statusMap[item.status]
+                            }
+                        }, {
+                            field: 'publish_date',
+                            title: '发布日期',
+                            width: 180
+                        }, {
+                            fixed: 'right',
+                            title: '操作',
+                            // toolbar: '#barDemo',
+                            templet({
+                                status
+                            }) {
+                                let operate_button = `<a class="layui-btn layui-btn-xs" lay-event="show">查看内容</a>`;
+                                switch (status) {
+                                    case 0: //未发布
+                                        operate_button += `<a class="layui-btn layui-btn-xs layui-bg-orange" lay-event="verify">待审核</a>`;
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                operate_button += `<a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
                             <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>`
-                        return operate_button;
-                    }
-                }]
-            ],
-            page: true
-        });
+                                return operate_button;
+                            }
+                        }]
+                    ],
+                    page: true
+                });
 
-        //头工具栏事件
-        table.on('toolbar(test)', function(obj) {
-            var checkStatus = table.checkStatus(obj.config.id);
-            switch (obj.event) {
-                case 'getCheckData':
-                    var data = checkStatus.data;
-                    layer.alert(JSON.stringify(data));
-                    break;
-                case 'getCheckLength':
-                    var data = checkStatus.data;
-                    layer.msg('选中了：' + data.length + ' 个');
-                    break;
-                case 'isAll':
-                    layer.msg(checkStatus.isAll ? '全选' : '未全选');
-                    break;
+                //头工具栏事件
+                table.on('toolbar(test)', function(obj) {
+                    var checkStatus = table.checkStatus(obj.config.id);
+                    switch (obj.event) {
+                        case 'getCheckData':
+                            var data = checkStatus.data;
+                            layer.alert(JSON.stringify(data));
+                            break;
+                        case 'getCheckLength':
+                            var data = checkStatus.data;
+                            layer.msg('选中了：' + data.length + ' 个');
+                            break;
+                        case 'isAll':
+                            layer.msg(checkStatus.isAll ? '全选' : '未全选');
+                            break;
 
-                    //自定义头工具栏右侧图标 - 提示
-                case 'LAYTABLE_TIPS':
-                    layer.alert('这是工具栏右侧自定义的一个图标按钮');
-                    break;
-            };
-        });
+                            //自定义头工具栏右侧图标 - 提示
+                        case 'LAYTABLE_TIPS':
+                            layer.alert('这是工具栏右侧自定义的一个图标按钮');
+                            break;
+                    };
+                });
 
-        //监听行工具事件
-        table.on('tool(test)', function(obj) {
-            let {
-                data,
-                event
-            } = obj;
-            let {
-                art_id,
-                title, //标题
-                content //内容
-            } = data;
-
-            switch (event) {
-                case 'del': //删除
-                    del(art_id);
-                    break;
-                case 'edit': //编辑
-                    edit(art_id);
-                    break;
-                case 'show': //弹框显示文章内容
-                    viewContent(title, content);
-                    break;
-                case 'verify': //待审核
-                    verify(art_id);
-                    break;
-            }
-        });
-
-
-        // 删除
-        function del(art_id) {
-            layer.confirm('是否确认删除', function(index) {
-                $.post('/deleartRow', {
-                    art_id
-                }, (res) => {
+                //监听行工具事件
+                table.on('tool(test)', function(obj) {
                     let {
+                        data,
+                        event
+                    } = obj;
+                    let {
+                        art_id,
+                        title, //标题
+                        content //内容
+                    } = data;
+
+                    switch (event) {
+                        case 'del': //删除
+                            del(art_id);
+                            break;
+                        case 'edit': //编辑
+                            edit(art_id);
+                            break;
+                        case 'show': //弹框显示文章内容
+                            viewContent(title, content);
+                            break;
+                        case 'verify': //待审核
+                            verify(art_id);
+                            break;
+                    }
+                });
+
+                // 删除
+                function del(art_id) {
+                    layer.confirm('是否确认删除', function(index) {
+                        $.post('/deleartRow', {
+                            art_id
+                        }, (res) => {
+                            let {
+                                errcode,
+                                message
+                            } = res;
+                            if (errcode == 0) {
+                                layer.msg(message);
+                                tableare.reload(); // 局部刷新  表格刷新
+                                layer.close(index); //确认后关闭弹窗
+                            } else {
+                                layer.msg(message);
+                                layer.close(index); //确认后关闭弹窗
+                            }
+
+                        }, 'json');
+                    });
+                }
+
+                // 查看文章内容
+                function viewContent(title, content) {
+                    //页面层
+                    layer.open({
+                        title: `文章标题：<span style=" font-weight: 700;font-size:20px;">${title}</span>`,
+                        type: 1,
+                        skin: 'layui-layer-rim', //加上边框
+                        area: ['850px', '700px'], //宽高
+                        content: `<div style="padding:15px">${content}</div>`
+                    });
+                }
+
+                // 待审核处理  发送ajax 请求 修改数据库状态
+                function verify(art_id) {
+                    //询问框
+
+                    layer.confirm('是否通过该文章审核', {
+                        btn: ['通过', '违规'] //按钮
+                    }, function() {
+                        examine(art_id, 1);
+                    }, function() {
+                        examine(art_id, 2);
+                    });
+                }
+
+                // 改变审核状态函数
+                function examine(art_id, state) {
+                    //loading层 遮盖
+                    var index = layer.load(1, {
+                        shade: [0.4, '#fff'] //0.4透明度的白色背景
+                    });
+                    // 发送ajax请求
+                    $.post('/toExamine', {
+                        art_id,
+                        state
+                    }, ({
                         errcode,
                         message
-                    } = res;
-                    if (errcode == 0) {
-                        layer.msg(message);
-                        tableare.reload(); // 局部刷新  表格刷新
-                        layer.close(index); //确认后关闭弹窗
-                    } else {
-                        layer.msg(message);
-                        layer.close(index); //确认后关闭弹窗
-                    }
-
-                }, 'json');
-            });
-        }
-
-
-        // 查看文章内容
-        function viewContent(title, content) {
-            //页面层
-            layer.open({
-                title: `文章标题：<span style=" font-weight: 700;font-size:20px;">${title}</span>`,
-                type: 1,
-                skin: 'layui-layer-rim', //加上边框
-                area: ['850px', '700px'], //宽高
-                content: `<div style="padding:15px">${content}</div>`
-            });
-        }
-
-        // 待审核处理  发送ajax 请求 修改数据库状态
-        function verify(art_id) {
-            //询问框
-
-            layer.confirm('是否通过该文章审核', {
-                btn: ['通过', '违规'] //按钮
-            }, function() {
-                examine(art_id, 1);
-            }, function() {
-                examine(art_id, 2);
-            });
-        }
-        // 改变审核状态函数
-        function examine(art_id, state) {
-            //loading层 遮盖
-            var index = layer.load(1, {
-                shade: [0.4, '#fff'] //0.4透明度的白色背景
-            });
-            // 发送ajax请求
-            $.post('/toExamine', {
-                art_id,
-                state
-            }, ({
-                errcode,
-                message
-            }) => {
-                if (errcode == 0) {
-                    tableare.reload(); // 局部刷新，重新加载表格
+                    }) => {
+                        if (errcode == 0) {
+                            tableare.reload(); // 局部刷新，重新加载表格
+                        }
+                        layer.msg(message)
+                        layer.closeAll(); //疯狂模式，关闭所有层
+                    }, 'json');
                 }
-                layer.msg(message)
-                layer.closeAll(); //疯狂模式，关闭所有层
-            }, 'json');
-        }
 
+                // 跳转到文章编辑页面
+                function edit(art_id) {
+                    // 把要编辑的数据id带过去
+                    location.href = `/artedit?art_id=${art_id}`
+                }
 
-        // 跳转到文章编辑页面
-        function edit(art_id) {
-            // 把要编辑的数据id带过去
-            location.href = `/artedit?art_id=${art_id}`
-        }
+                // 跳转添加数据页面
+                $('#add').on('click', function() {
+                    location.href = '/addArticlePage'
+                })
 
-    });
+                // 单击搜索 进行表格筛选 让表格进行重载
+                $('body').on('click', '#search', function() {
+                    let title = $('#title').val();
+                    let status = $('#status').val();
+                    //执行重载
+                    table.reload('testReload', {
+                        page: {
+                            curr: 1 //重新从第 1 页开始
+                        },
+                        where: {
+                            title,
+                            status
+                        }
+                    });
+                    $('#title').val(title);
+                    $('#status').val(status);
+                })
 
-
-    // 跳转添加数据页面
-    $('#add').on('click', function() {
-        location.href = '/addArticlePage'
-    })
-</script>
+            });
+        </script>
+</body>
 
 </html>

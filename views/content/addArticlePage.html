@@ -96,6 +96,8 @@
 
         //监听提交
         form.on('submit(formDemo)', function(data) {
+            console.log(11);
+            return false;
             // console.log(data); //获取的是表单数据 和点击提交的按钮
             data.field.content = editor.txt.html(); //获取编辑器内容
             //loading层 遮盖

@@ -9,5 +9,10 @@ statistics.cateCount = async(req, res) => {
     res.json(data);
 }
 
+statistics.monArtCount = async(req, res) => {
+    let sql = `select month(publish_date) month,count(*) as total from article where year(publish_date) = year(now()) group by month(publish_date)`
+    let data = await database(sql);
+    res.json(data);
+}
 
 module.exports = statistics;

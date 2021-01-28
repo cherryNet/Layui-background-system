@@ -132,5 +132,20 @@ router.get('/userSession', (req, res) => {
 router.get('/cateCount', statistics.cateCount);
 
 
+// 统计每月的文章总数
+router.get('/monArtCount', statistics.monArtCount);
+
+// 显示个人中心页面
+router.get('/personal', (req, res) => {
+    res.render('content/personal.html');
+})
+
+// 存入头像
+router.post('/picture_upload', userController.picture_upload);
+
+// 获取个人首页头像
+router.post('/obtain_pict', userController.obtain_pict);
+
+
 // 暴露路由器
 module.exports = router;

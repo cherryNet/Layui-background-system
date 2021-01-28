@@ -17,8 +17,11 @@
 
         <div class="layui-body">
             <!-- 内容主体区域 -->
-            <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-            <div id="cate" style="width: 600px;height:400px;"></div>
+            <div style="padding: 15px; display: flex;">
+                <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+                <div id="cate" style="width: 600px;height:400px;"></div>
+                <div id="month" style="width: 600px;height:400px;"></div>
+            </div>
         </div>
 
         <!-- 底部固定栏 -->
@@ -31,38 +34,87 @@
     <script>
         // 发送ajax请求 获取要统计的数据
         $.get('/cateCount', function(res) {
+            let dom = document.querySelector('#cate')
             let names = [];
             let totals = [];
             res.map(val => {
                 names.push(val.name);
                 totals.push(val.total);
             })
-            initEchart(names, totals);
+            let styleType = 'bar';
+            let title = '文章管理统计表'
+            initEchart({
+                names,
+                totals,
+                dom,
+                styleType,
+                title
+            });
         }, 'json');
 
 
+        // 发送ajax请求 获取每月的总数
+        $.get('/monArtCount', function(res) {
+            let dom = document.querySelector('#month')
+            let names = [];
+            let totals = [];
+            res.map(val => {
+                names.push(val.month + '月');
+                totals.push(val.total);
+            })
+            let styleType = 'line';
+            let title = '每月文章数'
+            initEchart({
+                names,
+                totals,
+                dom,
+                styleType,
+                title
+            });
+        })
+
+
         // 渲染可视数据的函数
-        function initEchart(names, totals) {
+        function initEchart(obj) {
+            let {
+                names,
+                totals,
+                dom,
+                styleType,
+                title
+            } = obj;
             // 基于准备好的dom，初始化echarts实例
-            var myChart = echarts.init(document.getElementById('cate'));
+            var myChart = echarts.init(dom);
 
             // 指定图表的配置项和数据
             var option = {
                 title: {
-                    text: '文章管理系统统计一览表'
+                    text: title, //标题
+                    // subtext: '单位：文章数',
+                    left: 'center', //对齐方式
+                    top: 'top',
                 },
-                tooltip: {},
+                tooltip: {
+                    show: true,
+                    axisPointer: {
+                        type: 'cross' // 显示十字 虚线数据
+                    }
+                },
                 legend: {
                     data: ['统计']
                 },
                 xAxis: {
-                    data: names
+                    data: names // 名称 获取一个数组
                 },
                 yAxis: {},
                 series: [{
                     name: '文章数',
-                    type: 'bar',
-                    data: totals
+                    type: styleType, // bar-柱状 line-折线 pie-饼状
+                    data: totals, // 数量 获取一个数组
+                    label: {
+                        show: true, //直接显示 数据再数据图上
+                        fontSize: 18, //字体大小
+                    }
                 }]
             };
 

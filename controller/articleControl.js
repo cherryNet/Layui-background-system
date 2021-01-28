@@ -5,12 +5,19 @@ const database = require('../public/backstage-codeJS/database.js');
 
 let moment = require('../public/js/moment')
 
-
+// 获取文章分页数据
 articleControl.articleAll = async(req, res) => {
-    let { page, limit: line } = req.query; //(页，显示行)
+    // limit:line 取别名
+    let { page, limit: line, title, status } = req.query; //(页，显示行)
+    // 定义查询条件
+    let where = 'where 1';
+    // 有值（为真）才拼接查询条件
+    title && (where += ` and title like '%${title}%'`)
+    status && (where += ` and status='${status}'`)
+
     page = (page - 1) * line; // 1 10   3 10
-    let sql = `select t1.*,t2.name from article t1 left join category t2 on t1.cat_id = t2.cat_id order by art_id desc limit ${page},${line} `;
-    let sql2 = `select count(*) as count from article;`
+    let sql = `select t1.*,t2.name from article t1 left join category t2 on t1.cat_id = t2.cat_id ${where} order by art_id desc limit ${page},${line} `;
+    let sql2 = `select count(*) as count from article ${where}`
     let Content = database(sql);
     let ContentLength = database(sql2);
     // 并行
@@ -137,10 +144,10 @@ articleControl.modifyArticle = async(req, res) => {
     let sql;
     if (cover) {
         //有新上传的图片
-        sql = `update article set title='${title}',content='${content}',cover='${cover}',status=${status},cat_id=${cat_id},publish_date=now() where art_id = ${art_id}`;
+        sql = `update article set title='${title}',content='${content}',cover='${cover}',status=${status},cat_id=${cat_id} where art_id = ${art_id}`;
     } else {
         //未修改旧图片
-        sql = `update article set title='${title}',content='${content}',status=${status},cat_id=${cat_id},publish_date=now() where art_id = ${art_id}`;
+        sql = `update article set title='${title}',content='${content}',status=${status},cat_id=${cat_id} where art_id = ${art_id}`;
     }
     let result = await database(sql)
         // 受影响行数不为空
