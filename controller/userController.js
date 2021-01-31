@@ -76,4 +76,28 @@ userController.passwordVer = async(req, res) => {
     }
 }
 
+// 用户注册
+userController.registerReq = async(req, res) => {
+    let { userName, Password } = req.body;
+    // 1.查询数据库有没有当前用户名
+    let sql = `select * from users where username = '${userName}'`
+    let data = await database(sql);
+    if (data.length) {
+        res.json({ errcode: 5, "message": "用户名已存在" });
+        return;
+    };
+    // 2.添加用户
+    Password = md5(`${Password}${secret}`);
+    let sql2 = `insert into users(username,password) values('${userName}','${Password}')`;
+    let result = await database(sql2);
+    // 受影响行不为0
+    if (result.affectedRows) {
+        // 成功
+        res.json({ errcode: 0, 'message': '注册成功' });
+    } else {
+        res.json({ errcode: 1, 'message': '网络异常，请稍后再试' });
+    }
+}
+
+
 module.exports = userController;

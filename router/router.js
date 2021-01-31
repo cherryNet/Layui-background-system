@@ -154,5 +154,8 @@ router.get('/changePwd', (req, res) => {
 // 修改密码的接口
 router.post('/passwordVer', userController.passwordVer);
 
+// 用户注册
+router.post('/registerReq', userController.registerReq)
+
 // 暴露路由器
 module.exports = router;

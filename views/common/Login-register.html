@@ -42,17 +42,17 @@
                 <h2>立即注册</h2>
                 <label>
                     <span>用户名</span>
-                    <input type="text" autocomplete="off"/>
+                    <input type="text" autocomplete="off" id="regUserName"/>
                 </label>
                 <label>
                     <span>密码</span>
-                    <input type="password" />
+                    <input type="password" id="regPassword"/>
                 </label>
                 <label>
                     <span>确认密码</span>
-                    <input type="password" />
+                    <input type="password" id="confirmPwd"/>
                 </label>
-                <button type="button" class="submit">注 册</button>
+                <button type="button" class="submit" id="regBtn">注 册</button>
                 <button type="button" class="fb-btn">使用 <span>facebook</span> 帐号注册</button>
             </div>
         </div>
@@ -90,8 +90,54 @@
                 message
             } = res;
             if (errcode === 0) {
-                // layer.msg(message);
-                location.href = '/index'; //跳转到首页页面
+                layer.msg(message);
+                setTimeout(function() {
+                    location.href = '/index'; //跳转到首页页面
+                }, 1000)
+            } else {
+                layer.msg(message);
+                layer.close(index); //关闭loading遮盖
+            }
+        })
+    })
+
+
+    // ajax注册
+    $('#regBtn').on('click', function() {
+        let userName = $.trim($("#regUserName").val());
+        let Password = $.trim($('#regPassword').val());
+        let confPwd = $.trim($('#confirmPwd').val()); //确认密码
+        if (userName == '' || Password == '' || confPwd == '') {
+            layer.msg('用户名和密码不能为空')
+            return;
+        }
+        if (Password.length < 6 || Password.length > 16) {
+            layer.msg('密码为6-16位')
+            return;
+        }
+        if (Password != confPwd) {
+            layer.msg('密码不一致')
+            return;
+        }
+        // loading层 遮盖
+        var index = layer.load(1, {
+            shade: [0.4, '#fff'] //0.4透明度的白色背景
+        });
+        // 发送ajax登陆请求
+        $.post('/registerReq', {
+            userName,
+            Password
+        }, (res) => {
+            console.log(res);
+            let {
+                errcode,
+                message
+            } = res;
+            if (errcode === 0) {
+                layer.msg(message);
+                setTimeout(function() {
+                    location.href = '/Login_register'; //跳转到登录页面
+                }, 1500)
             } else {
                 layer.msg(message);
                 layer.close(index); //关闭loading遮盖

@@ -45,7 +45,7 @@ app.use((req, res, next) => {
     // 获取当前访问的路由 req.path
     let path = req.path.toLowerCase(); //toLowerCase() 转换成小写
     // 定义不需要权限验证的路由
-    let routeArr = ['/loginreq', '/login_register'];
+    let routeArr = ['/loginreq', '/login_register', '/registerreq']; //都写小写
     // 判断当前数组里有没有访问的路由
     if (routeArr.includes(path)) {
         //有 则 放行

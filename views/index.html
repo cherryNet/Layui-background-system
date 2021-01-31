@@ -32,6 +32,7 @@
     {{include './public-js-css/scriptjs.html'}}
     <script src="/public/js/echarts.min.js"></script>
     <script>
+        console.log(111);
         // 发送ajax请求 获取要统计的数据
         $.get('/cateCount', function(res) {
             let dom = document.querySelector('#cate')
