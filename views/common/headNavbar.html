@@ -22,7 +22,7 @@
             </a>
             <dl class="layui-nav-child ">
                 <dd><a href="javascript:;" id="personal">更换头像</a></dd>
-                <dd><a href="javascript:;">修改密码</a></dd>
+                <dd><a href="javascript:;" id="ChangePwd">修改密码</a></dd>
             </dl>
         </li>
         <li class="layui-nav-item "><a href="javascript:; " id="logOff">退出</a></li>
@@ -80,9 +80,8 @@
         layer.open({
             type: 2,
             title: '',
-            shadeClose: true,
             shade: 0.5,
-            shadeClose: false,
+            shadeClose: false, //点击遮盖不关闭
             area: ['400px', '580px'],
             content: `/personal?user_id=${user_id}`, //iframe的url
             cancel: function(index, layero) {
@@ -90,5 +89,10 @@
                 return true;
             }
         })
+    })
+
+    // 跳转修改密码页面
+    $("#ChangePwd").on('click', function() {
+        location.href = `/changePwd?user_id=${user_id}`
     })
 </script>

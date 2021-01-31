@@ -27,7 +27,7 @@ userController.loginReq = async(req, res) => {
 // 保存(修改)上传的头像
 userController.picture_upload = async(req, res) => {
     let { potr_url, user_id, OldPict } = req.body;
-    console.log(OldPict);
+    // console.log(OldPict);
     OldPict && fs.unlinkSync(OldPict);
     let sql = `update users set avatar = '${potr_url}' where user_id = ${user_id}`;
     let data = await database(sql);
@@ -51,6 +51,28 @@ userController.obtain_pict = async(req, res) => {
         res.json(data[0])
     } else {
         res.json({ errcode: 1, 'message': '网络异常，请稍后再试' })
+    }
+}
+
+// 修改密码的接口
+userController.passwordVer = async(req, res) => {
+    let { usedPassword, newPassword, user_id } = req.body;
+    usedPassword = md5(`${usedPassword}${secret}`);
+    // 1.对比原密码是否正确
+    let sql = `select * from users where password = '${usedPassword}' and user_id = ${user_id}`;
+    let data = await database(sql);
+    if (!data.length) {
+        res.json({ errcode: 4, "message": "原密码错误" });
+        return;
+    }
+    // 2.修改旧密码
+    newPassword = md5(`${newPassword}${secret}`);
+    let sql2 = `update users set password = '${newPassword}' where user_id = ${user_id}`;
+    let result = await database(sql2);
+    if (result.affectedRows) {
+        res.json({ errcode: 0, "message": "修改成功" });
+    } else {
+        res.json({ errcode: 1, "message": "网络异常，请稍后再试" });
     }
 }
 

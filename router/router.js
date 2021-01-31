@@ -146,6 +146,13 @@ router.post('/picture_upload', userController.picture_upload);
 // 获取个人首页头像
 router.post('/obtain_pict', userController.obtain_pict);
 
+// 展示修改密码页面
+router.get('/changePwd', (req, res) => {
+    res.render('content/ChangePwd.html');
+})
+
+// 修改密码的接口
+router.post('/passwordVer', userController.passwordVer);
 
 // 暴露路由器
 module.exports = router;

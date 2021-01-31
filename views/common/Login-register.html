@@ -90,8 +90,8 @@
                 message
             } = res;
             if (errcode === 0) {
-                layer.msg(message);
-                location.href = '/'; //跳转到首页页面
+                // layer.msg(message);
+                location.href = '/index'; //跳转到首页页面
             } else {
                 layer.msg(message);
                 layer.close(index); //关闭loading遮盖
