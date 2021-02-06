@@ -21,7 +21,7 @@
                 <span id="userName">&nbsp;</span>
             </a>
             <dl class="layui-nav-child ">
-                <dd><a href="javascript:;" id="personal">更换头像</a></dd>
+                <dd><a href="javascript:;" id="personal">个人资料</a></dd>
                 <dd><a href="javascript:;" id="ChangePwd">修改密码</a></dd>
             </dl>
         </li>
@@ -29,70 +29,71 @@
     </ul>
 </div>
 <script src="/public/js/jQuery.js "></script>
-<script src="/public/layui/layui.js"></script>
 <script>
-    // 发送ajax请求,获取当前session用户信息
-    let user_id;
-    (function() {
-        $.get('/userSession', function(res) {
-            $('#userName').text(res.username);
-            user_id = res.user_id;
-            // console.log(res);
-            initial();
-        }, 'json')
-    })()
+    window.onload = function() {
+        // 发送ajax请求,获取当前session用户信息
+        let user_id;
+        (function() {
+            $.get('/userSession', function(res) {
+                $('#userName').text(res.username);
+                user_id = res.user_id;
+                // console.log(res);
+                initial();
+            }, 'json')
+        })()
 
-    // 获取当前session用户的头像
-    function initial() {
-        if (user_id == 'undefined') {
-            return;
+        // 获取当前session用户的头像
+        function initial() {
+            if (user_id == 'undefined') {
+                return;
+            }
+            $.post('/obtain_pict', {
+                user_id
+            }, (res) => {
+                let {
+                    avatar
+                } = res
+                if (avatar) {
+                    $('#head_conf').attr('src', avatar);
+                }
+            }, 'json')
         }
-        $.post('/obtain_pict', {
-            user_id
-        }, (res) => {
-            let {
-                avatar
-            } = res
-            if (avatar) {
-                $('#head_conf').attr('src', avatar);
-            }
-        }, 'json')
-    }
 
-    layui.use('layer', function() {
-        var layer = layui.layer;
-    });
-
-    // 退出登陆
-    $('#logOff').on('click', function() {
-        layer.confirm('退出当前账号', {
-            title: '',
-            btn: ['退出', '取消'] //按钮
-        }, function() {
-            location.href = '/LogOut'; //退出登陆
+        layui.use('layer', function() {
+            var layer = layui.layer;
         });
-    })
 
-
-    // 更换头像
-    $('#personal').on('click', function() {
-        //iframe层
-        layer.open({
-            type: 2,
-            title: '',
-            shade: 0.5,
-            shadeClose: false, //点击遮盖不关闭
-            area: ['400px', '580px'],
-            content: `/personal?user_id=${user_id}`, //iframe的url
-            cancel: function(index, layero) {
-                location = location //点击关闭弹窗刷新页面
-                return true;
-            }
+        // 退出登陆
+        $('#logOff').on('click', function() {
+            layer.confirm('退出当前账号', {
+                title: '',
+                btn: ['退出', '取消'] //按钮
+            }, function() {
+                location.href = '/LogOut'; //退出登陆
+            });
         })
-    })
 
-    // 跳转修改密码页面
-    $("#ChangePwd").on('click', function() {
-        location.href = `/changePwd?user_id=${user_id}`
-    })
+
+        // 更换头像
+        $('#personal').on('click', function() {
+            //iframe层
+            layer.open({
+                type: 2,
+                title: '',
+                shade: 0.5,
+                shadeClose: false, //点击遮盖不关闭
+                area: ['400px', '580px'],
+                content: `/personal?user_id=${user_id}`, //iframe的url
+                cancel: function(index, layero) {
+                    location = location //点击关闭弹窗刷新页面
+                    return true;
+                }
+            })
+        })
+
+        // 跳转修改密码页面
+        $("#ChangePwd").on('click', function() {
+            location.href = `/changePwd?user_id=${user_id}`
+        })
+    }
 </script>

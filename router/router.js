@@ -143,8 +143,14 @@ router.get('/personal', (req, res) => {
 // 存入头像
 router.post('/picture_upload', userController.picture_upload);
 
-// 获取个人首页头像
+// 删除预览头像
+router.delete('/delPrt', userController.delPrt);
+
+// 获取个人首页头像 资料回显
 router.post('/obtain_pict', userController.obtain_pict);
+
+// 修改个人资料
+router.put('/Profile_alter', userController.Profile_alter);
 
 // 展示修改密码页面
 router.get('/changePwd', (req, res) => {

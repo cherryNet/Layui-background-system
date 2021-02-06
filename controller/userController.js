@@ -16,8 +16,15 @@ userController.loginReq = async(req, res) => {
     if (data.length) {
         // 把用户信息存入到session会话中
         req.session.userInfo = data[0];
-        // 匹配成功 有当前用户名
-        res.json({ errcode: 0, message: '登录成功' });
+        // 把当前用户的登陆时间记录下来
+        let sql2 = `update users set last_login_date = now() where username = '${username}'`;
+        let result = await database(sql2);
+        if (result.affectedRows) {
+            // 匹配成功 有当前用户名
+            res.json({ errcode: 0, message: '登录成功' });
+        } else {
+            res.json({ errcode: 1, message: '网络异常请稍后再试' });
+        }
     } else {
         // 用户名或密码错误
         res.json({ errcode: 2, message: '用户名或密码错误' });
@@ -28,7 +35,7 @@ userController.loginReq = async(req, res) => {
 userController.picture_upload = async(req, res) => {
     let { potr_url, user_id, OldPict } = req.body;
     // console.log(OldPict);
-    OldPict && fs.unlinkSync(OldPict);
+    OldPict && fs.unlinkSync(OldPict); //删除旧图片
     let sql = `update users set avatar = '${potr_url}' where user_id = ${user_id}`;
     let data = await database(sql);
     // 受影响行
@@ -39,7 +46,18 @@ userController.picture_upload = async(req, res) => {
     }
 }
 
-// 获取个人首页头像
+// 删除预览头像
+userController.delPrt = (req, res) => {
+    let { potr_url } = req.body;
+    try {
+        potr_url && fs.unlinkSync(potr_url); //删除预览图片
+        res.json({ errcode: 0, message: '删除预览成功' })
+    } catch (err) {
+        res.json({ errcode: 1, message: '网络异常请稍后再试' })
+    }
+}
+
+// 获取个人首页头像 资料回显
 userController.obtain_pict = async(req, res) => {
     let { user_id } = req.body;
     // 查询数据库
@@ -51,6 +69,18 @@ userController.obtain_pict = async(req, res) => {
         res.json(data[0])
     } else {
         res.json({ errcode: 1, 'message': '网络异常，请稍后再试' })
+    }
+}
+
+// 修改个人资料
+userController.Profile_alter = async(req, res) => {
+    let { sex, explain, user_id } = req.body;
+    let sql = `update users set explain_1 = "${explain}",sex = '${sex}' where user_id ="${user_id}"`
+    let data = await database(sql);
+    if (data.affectedRows) {
+        res.json({ errcode: 0, "message": "修改成功" })
+    } else {
+        res.json({ errcode: 1, "message": "网络异常，请稍后再试" });
     }
 }
 
