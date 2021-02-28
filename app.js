@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 // 引入session会话技术
 let session = require('express-session');
 // 模板引擎
@@ -7,7 +8,11 @@ const artTemplate = require('art-template');
 const express_template = require('express-art-template');
 
 
-const app = express();
+let app = express();
+app.use(cors()); //允许跨域
+
+// 导入前台路由模块
+let apiRouter = require('./router/apiRouter.js');
 // 导入路由器模块
 let router = require('./router/router.js');
 
@@ -25,6 +30,7 @@ app.use('/public', express.static(path.join(__dirname, './public')));
 // 托管静态资源
 app.use('/uploads', express.static('./uploads'))
 
+app.use('/api', apiRouter);
 
 // 初始化session,定义session一些配置
 let options = {
@@ -38,7 +44,6 @@ let options = {
     }
 }
 app.use(session(options))
-
 
 // 在进入路由 router函数 之前要进行 验证权限 (防翻墙)
 app.use((req, res, next) => {
